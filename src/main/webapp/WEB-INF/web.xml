@@ -1,0 +1,43 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         version="4.0"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+         http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+
+    <display-name>Employee EJB POC</display-name>
+
+    <!-- Servlet 1: Register Employee -->
+    <servlet>
+        <servlet-name>RegisterEmployeeServlet</servlet-name>
+        <servlet-class>com.example.employee.controller.RegisterEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterEmployeeServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet 2: Fetch Employee Details -->
+    <servlet>
+        <servlet-name>FetchEmployeeServlet</servlet-name>
+        <servlet-class>com.example.employee.controller.FetchEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FetchEmployeeServlet</servlet-name>
+        <url-pattern>/employee</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet 3: HR Policy Viewer -->
+    <servlet>
+        <servlet-name>HrPolicyServlet</servlet-name>
+        <servlet-class>com.example.employee.controller.HrPolicyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HrPolicyServlet</servlet-name>
+        <url-pattern>/policies</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>register.jsp</welcome-file>
+    </welcome-file-list>
+
+</web-app>
