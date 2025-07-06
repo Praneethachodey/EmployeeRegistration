@@ -4,6 +4,7 @@ import com.example.employee.dto.EmployeeWithPoliciesDTO;
 import com.example.employee.ejb.EmployeeDetailsEJB;
 import com.example.employee.service.SecurityService;
 import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ public class FetchEmployeeServlet extends HttpServlet {
     @EJB
     private EmployeeDetailsEJB employeeDetailsEJB;
     
-    @EJB
+    @Inject
     private SecurityService securityService;
     
     @Override

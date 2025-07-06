@@ -4,6 +4,7 @@ import com.example.employee.entity.HrPolicy;
 import com.example.employee.ejb.HrPolicyEJB;
 import com.example.employee.service.SecurityService;
 import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,7 +19,7 @@ public class HrPolicyServlet extends HttpServlet {
     @EJB
     private HrPolicyEJB hrPolicyEJB;
     
-    @EJB
+    @Inject
     private SecurityService securityService;
     
     @Override

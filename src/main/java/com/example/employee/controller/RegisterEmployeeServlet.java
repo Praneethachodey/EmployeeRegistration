@@ -5,6 +5,7 @@ import com.example.employee.dto.EmployeeWithPoliciesDTO;
 import com.example.employee.ejb.RegisterEmployeeEJB;
 import com.example.employee.service.SecurityService;
 import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +20,7 @@ public class RegisterEmployeeServlet extends HttpServlet {
     @EJB
     private RegisterEmployeeEJB registerEJB;
     
-    @EJB
+    @Inject
     private SecurityService securityService;
     
     @Override

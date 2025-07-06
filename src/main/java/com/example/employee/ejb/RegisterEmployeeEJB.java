@@ -27,13 +27,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class RegisterEmployeeEJB {
 
-    @EJB
+    @Inject
     private EmployeeService employeeService;
 
-    @EJB
+    @Inject
     private AuditService auditService;
 
-    @EJB
+    @Inject
     private SecurityService securityService;
 
     @EJB
