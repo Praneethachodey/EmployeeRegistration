@@ -1,49 +1,84 @@
 package com.example.employee.controller;
 
-import com.example.employee.dto.EmployeeWithPoliciesDTO;
-import com.example.employee.ejb.EmployeeRegistrationEJB;
 import com.example.employee.entity.Employee;
-
+import com.example.employee.dto.EmployeeWithPoliciesDTO;
+import com.example.employee.ejb.RegisterEmployeeEJB;
+import com.example.employee.service.SecurityService;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-@WebServlet("/register")
 public class RegisterEmployeeServlet extends HttpServlet {
-
+    
     @EJB
-    private EmployeeRegistrationEJB registrationEJB;
-
+    private RegisterEmployeeEJB registerEJB;
+    
+    @EJB
+    private SecurityService securityService;
+    
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
-        Employee emp = new Employee();
-        emp.setFirstName(req.getParameter("firstName"));
-        emp.setLastName(req.getParameter("lastName"));
-        emp.setAge(Integer.parseInt(req.getParameter("age")));
-        emp.setDateOfBirth(LocalDate.parse(req.getParameter("dateOfBirth")));
-        emp.setPlace(req.getParameter("place"));
-        emp.setEmail(req.getParameter("email"));
-        emp.setPhoneNumber(req.getParameter("phoneNumber"));
-
-        EmployeeWithPoliciesDTO dto = registrationEJB.registerEmployee(emp);
-
-        resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
-
-        out.println("<html><body>");
-        out.println("<h2>Employee Registered</h2>");
-        out.println("<p>Name: " + dto.getEmployee().getFirstName() + " " + dto.getEmployee().getLastName() + "</p>");
-        out.println("<p>Email: " + dto.getEmployee().getEmail() + "</p>");
-        out.println("<h3>HR Policies</h3><ul>");
-        dto.getPolicies().forEach(policy ->
-                out.println("<li><strong>" + policy.getPolicyName() + ":</strong> " + policy.getDescription() + "</li>")
-        );
-        out.println("</ul></body></html>");
+        
+        try {
+            // Create a session ID for this request
+            String sessionId = UUID.randomUUID().toString();
+            
+            // Create security context
+            securityService.createSecurityContext("WEB_USER", "BASIC", sessionId);
+            
+            // Get form parameters
+            String employeeId = request.getParameter("employeeId");
+            String name = request.getParameter("name");
+            String department = request.getParameter("department");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            
+            // Create employee object
+            Employee employee = new Employee();
+            employee.setEmployeeID(employeeId);
+            employee.setName(name);
+            employee.setDepartment(department);
+            employee.setEmail(email);
+            employee.setPhone(phone);
+            employee.setCreatedDate(LocalDateTime.now());
+            employee.setLastModified(LocalDateTime.now());
+            employee.setStatus("ACTIVE");
+            employee.setSecurityLevel("BASIC");
+            
+            // Register employee and get complete details with policies
+            EmployeeWithPoliciesDTO employeeWithPolicies = registerEJB.registerEmployee(employee, sessionId);
+            
+            // Set success message
+            request.setAttribute("message", "Employee registered successfully!");
+            request.setAttribute("employeeId", employeeId);
+            
+            // Set the complete employee data with policies
+            request.setAttribute("employee", employeeWithPolicies.getEmployee());
+            request.setAttribute("policies", employeeWithPolicies.getPolicies());
+            request.setAttribute("responseTimestamp", employeeWithPolicies.getResponseTimestamp());
+            request.setAttribute("isCached", employeeWithPolicies.isCached());
+            
+            // Forward to editable employee details page
+            request.getRequestDispatcher("/employee-details.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            // Set error message
+            request.setAttribute("error", "Registration failed: " + e.getMessage());
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
+        }
     }
-}
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        // Forward to registration form
+        request.getRequestDispatcher("/register.jsp").forward(request, response);
+    }
+} 

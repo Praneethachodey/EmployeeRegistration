@@ -1,6 +1,6 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
   <persistence-unit name="employeePU" transaction-type="JTA">
-    <jta-data-source>java:/jdbc/EmployeeDS</jta-data-source>
+    <jta-data-source>java:/EmployeeDS</jta-data-source>
     <properties>
       <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
     </properties>

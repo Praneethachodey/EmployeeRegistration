@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messaging-deployment xmlns="urn:jboss:messaging-activemq-deployment:1.0">
+   <server name="default">
+      <jms-destinations>
+         <jms-queue name="employeeQueue">
+            <entry name="java:/jms/queue/employeeQueue"/>
+         </jms-queue>
+         <jms-queue name="registrationQueue">
+            <entry name="java:/jms/queue/registrationQueue"/>
+         </jms-queue>
+         <jms-queue name="employeeDetailsQueue">
+            <entry name="java:/jms/queue/employeeDetailsQueue"/>
+         </jms-queue>
+         <jms-queue name="externalPolicyQueue">
+            <entry name="java:/jms/queue/externalPolicyQueue"/>
+         </jms-queue>
+         <jms-queue name="hrPolicyAuditQueue">
+            <entry name="java:/jms/queue/hrPolicyAuditQueue"/>
+         </jms-queue>
+         <jms-queue name="hrPolicyNotificationQueue">
+            <entry name="java:/jms/queue/hrPolicyNotificationQueue"/>
+         </jms-queue>
+         <jms-queue name="auditQueue">
+            <entry name="java:/jms/queue/auditQueue"/>
+         </jms-queue>
+         <jms-queue name="securityQueue">
+            <entry name="java:/jms/queue/securityQueue"/>
+         </jms-queue>
+      </jms-destinations>
+   </server>
+</messaging-deployment> 

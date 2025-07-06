@@ -1,37 +1,67 @@
 package com.example.employee.controller;
 
-import com.example.employee.ejb.HrPolicyEJB;
 import com.example.employee.entity.HrPolicy;
-
+import com.example.employee.ejb.HrPolicyEJB;
+import com.example.employee.service.SecurityService;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
-
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
+import java.util.UUID;
 
-@WebServlet("/policies")
 public class HrPolicyServlet extends HttpServlet {
-
+    
     @EJB
-    private HrPolicyEJB policyEJB;
-
+    private HrPolicyEJB hrPolicyEJB;
+    
+    @EJB
+    private SecurityService securityService;
+    
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
-        List<HrPolicy> policies = policyEJB.getAllPolicies();
-
-        resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
-
-        out.println("<html><body>");
-        out.println("<h2>All HR Policies</h2><ul>");
-        policies.forEach(policy ->
-                out.println("<li><strong>" + policy.getPolicyName() + ":</strong> " + policy.getDescription() + "</li>")
-        );
-        out.println("</ul></body></html>");
+        
+        try {
+            String department = request.getParameter("department");
+            
+            // Create a session ID for this request
+            String sessionId = UUID.randomUUID().toString();
+            
+            // Create security context
+            securityService.createSecurityContext("WEB_USER", "BASIC", sessionId);
+            
+            List<HrPolicy> policies;
+            
+            if (department != null && !department.trim().isEmpty()) {
+                // Get policies for specific department
+                policies = hrPolicyEJB.getPoliciesByDepartment(department, sessionId);
+                request.setAttribute("department", department);
+            } else {
+                // Get all policies
+                policies = hrPolicyEJB.getPolicies();
+            }
+            
+            request.setAttribute("policies", policies);
+            request.setAttribute("message", "Policies fetched successfully!");
+            
+            // Forward to result page
+            request.getRequestDispatcher("/hr-policies.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            // Set error message
+            request.setAttribute("error", "Failed to fetch policies: " + e.getMessage());
+            request.getRequestDispatcher("/hr-policies.jsp").forward(request, response);
+        }
     }
-}
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        // Redirect to GET method
+        doGet(request, response);
+    }
+} 
